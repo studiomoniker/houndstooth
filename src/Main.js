@@ -19,7 +19,7 @@ using(Box2D, "b2.+");
 
 
 (function Main() {
-	var STAGE_WIDTH = 270,
+	var STAGE_WIDTH = 170,
 		STAGE_HEIGHT = 800;
 	var METER = 100;
 
@@ -30,7 +30,7 @@ using(Box2D, "b2.+");
 	var touchX, touchY;
 	var isBegin, wasMoved;
 	var stats;
-	var toothScale = 0.1;
+	var toothScale = 17/270;
 	var myQueryCallback;
 	var mouseJointGroundBody;
 
@@ -332,7 +332,7 @@ using(Box2D, "b2.+");
 		var teethInRow = 10;
 
 		var color, black = true, first = true;
-		var size = 0.27;
+		var size = 0.17;
 		var x, y;
 		// Rows
 		for (var i = 0; i < 35; i++) {
