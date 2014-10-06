@@ -100,7 +100,7 @@ using(Box2D, "b2.+");
 
 		bodyDef.set_type(Box2D.b2_dynamicBody);
 
-		for (var i = 0; i < 50; i++) {
+		for (var i = 0; i < 200; i++) {
 			var x = MathUtil.rndRange(0, STAGE_WIDTH) / METER;
 			var y = MathUtil.rndRange(0, STAGE_HEIGHT - 50) / METER;
 
@@ -195,11 +195,8 @@ using(Box2D, "b2.+");
 		if (dragBody) {
 			var i = dragBody.i;
 			// Remove it
-
-
 			world.DestroyBody(dragBody);
 			stage.removeChild(actors[i]);
-
 			bodies[i] = null;
 			actors[i] = null;
 		} else {
@@ -298,6 +295,7 @@ using(Box2D, "b2.+");
 			var shape = createPolygonShape(array);
 			polyFixture.set_shape(shape);
 			polyFixture.set_friction(4);
+			polyFixture.set_density(20);
 			polyFixture.set_restitution(0.2);
 
 			body.CreateFixture(polyFixture);
