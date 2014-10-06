@@ -28,7 +28,7 @@ using(Box2D, "b2.+");
 	var stage, renderer;
 	var world, mouseJoint;
 	var touchX, touchY;
-	var isBegin;
+	var isBegin, wasMoved;
 	var stats;
 	var toothScale = 0.1;
 	var myQueryCallback;
@@ -74,7 +74,7 @@ using(Box2D, "b2.+");
 
 	function onLoadAssets() {
 		world = new Box2D.b2World(new Box2D.b2Vec2(0, 10), true);
-		mouseJointGroundBody = world.CreateBody( new b2BodyDef() );
+		mouseJointGroundBody = world.CreateBody(new b2BodyDef());
 		world.SetContinuousPhysics(true);
 
 		polyFixture = new Box2D.b2FixtureDef();
@@ -83,7 +83,6 @@ using(Box2D, "b2.+");
 		polyFixture.set_density(1);
 
 		bodyDef = new Box2D.b2BodyDef();
-		//bodyDef.set_type = Box2D.b2_staticBody;
 
 		//down
 		shape.SetAsBox(10, 1);
@@ -101,21 +100,21 @@ using(Box2D, "b2.+");
 
 		bodyDef.set_type(Box2D.b2_dynamicBody);
 
-		for (var i = 0; i < 100; i++) {
+		for (var i = 0; i < 50; i++) {
 			var x = MathUtil.rndRange(0, STAGE_WIDTH) / METER;
 			var y = MathUtil.rndRange(0, STAGE_HEIGHT - 50) / METER;
 
 			placeTooth(x, y);
 		}
 
-		    myQueryCallback = new b2QueryCallback();
+		myQueryCallback = new b2QueryCallback();
 
 		Box2D.customizeVTable(myQueryCallback, [{
 			original: Box2D.b2QueryCallback.prototype.ReportFixture,
 			replacement: function(thsPtr, fixturePtr) {
 				var ths = Box2D.wrapPointer(thsPtr, b2QueryCallback);
 				var fixture = Box2D.wrapPointer(fixturePtr, b2Fixture);
-				if (fixture.GetBody().GetType() != Box2D.b2_dynamicBody) //mouse cannot drag static bodies around
+				if (fixture.GetBody().GetType() != Box2D.b2_dynamicBody)
 					return true;
 				if (!fixture.TestPoint(ths.m_point))
 					return true;
@@ -127,26 +126,30 @@ using(Box2D, "b2.+");
 
 		document.addEventListener("mousedown", function(event) {
 			isBegin = true;
-			onMove(event);
+			saveMousePosition(event);
 			document.addEventListener("mousemove", onMove, true);
 		}, true);
 
 		document.addEventListener("mouseup", function(event) {
 			document.removeEventListener("mousemove", onMove, true);
 			isBegin = false;
+			if (!wasMoved) onClick();
+			wasMoved = false;
 			touchX = undefined;
 			touchY = undefined;
 		}, true);
 
 		renderer.view.addEventListener("touchstart", function(event) {
 			isBegin = true;
-			onMove(event);
+			saveMousePosition(event);
 			renderer.view.addEventListener("touchmove", onMove, true);
 		}, true);
 
 		renderer.view.addEventListener("touchend", function(event) {
 			renderer.view.removeEventListener("touchmove", onMove, true);
 			isBegin = false;
+			if (!wasMoved) onClick();
+			wasMoved = false;
 			touchX = undefined;
 			touchY = undefined;
 		}, true);
@@ -168,19 +171,15 @@ using(Box2D, "b2.+");
 
 		if (myQueryCallback.m_fixture) {
 			return myQueryCallback.m_fixture.GetBody();
-			var md = new b2MouseJointDef();
-			md.set_bodyA(mouseJointGroundBody);
-			md.set_bodyB(body);
-			md.set_target(new b2Vec2(mousePosWorld.x, mousePosWorld.y));
-			md.set_maxForce(1000 * body.GetMass());
-			md.set_collideConnected(true);
-
-			mouseJoint = Box2D.castObject(world.CreateJoint(md), b2MouseJoint);
-			body.SetAwake(true);
 		}
 	}
 
 	function onMove(event) {
+		wasMoved = true;
+		saveMousePosition(event);
+	}
+
+	function saveMousePosition(event) {
 		if (event.changedTouches) {
 			var touche = event.changedTouches[0];
 			touchX = touche.pageX / METER;
@@ -191,10 +190,28 @@ using(Box2D, "b2.+");
 		}
 	}
 
+	function onClick() {
+		var dragBody = getBodyAtMouse();
+		if (dragBody) {
+			var i = dragBody.i;
+			// Remove it
+
+
+			world.DestroyBody(dragBody);
+			stage.removeChild(actors[i]);
+
+			bodies[i] = null;
+			actors[i] = null;
+		} else {
+			placeTooth(touchX, touchY);
+		}
+
+	}
+
 	function update() {
 		requestAnimationFrame(update);
 
-		if (isBegin && !mouseJoint) {
+		if (isBegin && wasMoved && !mouseJoint) {
 			var dragBody = getBodyAtMouse();
 			if (dragBody) {
 				var jointDef = new Box2D.b2MouseJointDef();
@@ -223,8 +240,9 @@ using(Box2D, "b2.+");
 
 		var n = actors.length;
 		for (var i = 0; i < n; i++) {
-			var body = bodies[i];
 			var actor = actors[i];
+			if (!actor) continue;
+			var body = bodies[i];
 			var position = body.GetPosition();
 			actor.position.x = position.get_x() * METER;
 			actor.position.y = position.get_y() * METER;
@@ -257,8 +275,6 @@ using(Box2D, "b2.+");
 
 
 	function placeTooth(x, y, color, shape, fixed) {
-		// X AND Y ARE IN PHYSICS SCALE
-
 		var i = bodies.length;
 
 		var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/tooth.png"));
@@ -271,7 +287,7 @@ using(Box2D, "b2.+");
 		bodyDef.get_position().Set(x, y);
 
 		var body = world.CreateBody(bodyDef);
-
+		body.i = i;
 
 		parts.forEach(function(part) {
 			var array = [];
