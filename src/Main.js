@@ -19,7 +19,7 @@ using(Box2D, "b2.+");
 
 
 (function Main() {
-	var STAGE_WIDTH = 470,
+	var STAGE_WIDTH = 270,
 		STAGE_HEIGHT = 800;
 	var METER = 100;
 
@@ -35,6 +35,8 @@ using(Box2D, "b2.+");
 	var mouseJointGroundBody;
 
 	var polyFixture, bodyDef;
+
+	var stack = true;
 
 	(function init() {
 		if (!window.requestAnimationFrame) {
@@ -100,12 +102,17 @@ using(Box2D, "b2.+");
 
 		bodyDef.set_type(Box2D.b2_dynamicBody);
 
-		for (var i = 0; i < 200; i++) {
-			var x = MathUtil.rndRange(0, STAGE_WIDTH) / METER;
-			var y = MathUtil.rndRange(0, STAGE_HEIGHT - 50) / METER;
+		if (!stack) {
+			for (var i = 0; i < 200; i++) {
+				var x = MathUtil.rndRange(0, STAGE_WIDTH) / METER;
+				var y = MathUtil.rndRange(0, STAGE_HEIGHT - 50) / METER;
 
-			placeTooth(x, y);
+				placeTooth(x, y);
+			}
+		} else {
+			preStack();
 		}
+
 
 		myQueryCallback = new b2QueryCallback();
 
@@ -232,7 +239,7 @@ using(Box2D, "b2.+");
 			}
 		}
 
-		world.Step(1 / 60, 100, 100);
+		world.Step(1 / 300, 1, 1);
 		world.ClearForces();
 
 		var n = actors.length;
@@ -272,6 +279,7 @@ using(Box2D, "b2.+");
 
 
 	function placeTooth(x, y, color, shape, fixed) {
+		// X && Y in physical units
 		var i = bodies.length;
 
 		var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/tooth.png"));
@@ -320,5 +328,46 @@ using(Box2D, "b2.+");
 	}
 
 
+	function preStack() {
+		var teethInRow = 10;
+
+		var color, black = true, first = true;
+		var size = 0.27;
+		var x, y;
+		// Rows
+		for (var i = 0; i < 35; i++) {
+			// Columns
+			// if (black) {
+			// 	color = [0, 0, 0];
+			// } else {
+			// 	color = [255, 255, 255];
+			// }
+
+			for (var j = 0; j < teethInRow; j++) {
+				x = j * size + 0.12;
+				y = (STAGE_HEIGHT / METER) - (i * size * 0.4) - 0.1;
+
+				if (!black) {
+					x += size/2;
+					x -= 4;
+				}
+
+				placeTooth(x, y);
+			}
+
+
+			if (first) {
+				first = false;
+				x += size;
+				//placeTooth(x, y, color, flatToothRightBottom, false);
+			} else if (black){
+				x += size;
+				//placeTooth(x, y, color, flatToothRight2, first);
+				//placeTooth(x, y, color, flatToothRight, first);
+			}
+
+			black = !black;
+		}
+	};
 
 })();
