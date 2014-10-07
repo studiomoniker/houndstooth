@@ -38,7 +38,7 @@ using(Box2D, "b2.+");
 	var stack = true;
 
 	var originalToothSize = 270;
-	var teethInRow = 10;
+	var teethInRow = 15;
 	var toothSpacing = 2;
 
 	var usableWidth = STAGE_WIDTH - (teethInRow - 1) * toothSpacing;
@@ -66,7 +66,7 @@ using(Box2D, "b2.+");
 		document.body.appendChild(container);
 
 		stats = new Stats();
-		container.appendChild(stats.domElement);
+		//container.appendChild(stats.domElement);
 		stats.domElement.style.position = "absolute";
 
 		stage = new PIXI.Stage(0xDDDDDD, true);
@@ -201,8 +201,8 @@ using(Box2D, "b2.+");
 			touchX = touche.pageX / METER;
 			touchY = touche.pageY / METER;
 		} else {
-			touchX = event.clientX / METER;
-			touchY = event.clientY / METER;
+			touchX = event.layerX / METER;
+			touchY = event.layerY / METER;
 		}
 	}
 
@@ -231,7 +231,7 @@ using(Box2D, "b2.+");
 				jointDef.set_bodyA(mouseJointGroundBody);
 				jointDef.set_bodyB(dragBody);
 				jointDef.set_target(new b2Vec2(touchX, touchY));
-				jointDef.set_maxForce(100 * dragBody.GetMass());
+				jointDef.set_maxForce(500 * dragBody.GetMass());
 				jointDef.set_collideConnected(true);
 
 				mouseJoint = Box2D.castObject(world.CreateJoint(jointDef), b2MouseJoint);
@@ -248,7 +248,7 @@ using(Box2D, "b2.+");
 			}
 		}
 
-		world.Step(1 / 300, 1, 1);
+		world.Step(1 / 30, 1, 1);
 		world.ClearForces();
 
 		var n = actors.length;
@@ -341,9 +341,9 @@ using(Box2D, "b2.+");
 
 		var size = toothSize / METER + spacing;
 		var x, y;
-		// Rows
-		for (var i = 0; i < 98; i++) {
 
+		// Rows
+		for (var i = 0; i < 130; i++) {
 			for (var j = 0; j < teethInRow; j++) {
 				// Positions
 				x = (j * size * 0.8) + size/2;
