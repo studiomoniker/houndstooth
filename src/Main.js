@@ -37,8 +37,15 @@ using(Box2D, "b2.+");
 
 	var stack = true;
 
+	var originalToothSize = 270;
 	var teethInRow = 10;
-	var toothScale = (STAGE_WIDTH/teethInRow)/270;
+	var toothSpacing = 2;
+
+	var usableWidth = STAGE_WIDTH - (teethInRow - 1) * toothSpacing;
+	// A row of n teeth needs 1*toothSize + (n-1) * toothSize * 0.8 space
+	var toothSize = usableWidth / (1 + (teethInRow - 1) * 0.8);
+
+	var toothScale = toothSize/originalToothSize;
 
 	(function init() {
 		if (!window.requestAnimationFrame) {
@@ -261,7 +268,6 @@ using(Box2D, "b2.+");
 
 
 	function scaleParts(array) {
-		var originalToothSize = 270;
 		var o = -originalToothSize / 2;
 
 		parts.forEach(function(part) {
@@ -331,11 +337,9 @@ using(Box2D, "b2.+");
 
 
 	function preStack() {
-		var spacing = 0.02;
+		var spacing = toothSpacing / METER;
 
-		//teethInRow += 2;
-		var color, black = true, first = true;
-		var size = (STAGE_WIDTH/teethInRow) / METER + spacing;
+		var size = toothSize / METER + spacing;
 		var x, y;
 		// Rows
 		for (var i = 0; i < 98; i++) {
@@ -348,13 +352,8 @@ using(Box2D, "b2.+");
 				// y is top origin
 				y = (STAGE_HEIGHT / METER) - y;
 
-				//if (black) {
 				placeTooth(x, y);
-				//}
-
 			}
-
-			black = !black;
 		}
 	}
 
