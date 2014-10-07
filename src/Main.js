@@ -19,8 +19,8 @@ using(Box2D, "b2.+");
 
 
 (function Main() {
-	var STAGE_WIDTH = 340,
-		STAGE_HEIGHT = 800;
+	var STAGE_WIDTH = 720,
+			STAGE_HEIGHT = 800;
 	var METER = 100;
 
 	var bodies = [],
@@ -30,13 +30,15 @@ using(Box2D, "b2.+");
 	var touchX, touchY;
 	var isBegin, wasMoved;
 	var stats;
-	var toothScale = 34/270;
 	var myQueryCallback;
 	var mouseJointGroundBody;
 
 	var polyFixture, bodyDef;
 
 	var stack = true;
+
+	var teethInRow = 10;
+	var toothScale = (STAGE_WIDTH/teethInRow)/270;
 
 	(function init() {
 		if (!window.requestAnimationFrame) {
@@ -329,10 +331,9 @@ using(Box2D, "b2.+");
 
 
 	function preStack() {
-		var teethInRow = 10;
-
+		var spacing = 0.05;
 		var color, black = true, first = true;
-		var size = 0.29;
+		var size = (STAGE_WIDTH/teethInRow) / METER + spacing;
 		var x, y;
 		// Rows
 		for (var i = 0; i < 35; i++) {
@@ -344,30 +345,21 @@ using(Box2D, "b2.+");
 			// }
 
 			for (var j = 0; j < teethInRow; j++) {
-				x = j * size + 0.34;
-				y = (STAGE_HEIGHT / METER) - (i * size * 0.4) - 0.2;
+				// Positions
+				x = (j * size * 0.8) + size/2;
+				y = (i * size * 0.8) + size/2;
 
-				if (!black) {
-					x += size/2;
-					x -= 4;
-				}
+				// y is top origin
+				y = (STAGE_HEIGHT / METER) - y;
 
+				//if (black) {
 				placeTooth(x, y);
-			}
+				//}
 
-
-			if (first) {
-				first = false;
-				x += size;
-				//placeTooth(x, y, color, flatToothRightBottom, false);
-			} else if (black){
-				x += size;
-				//placeTooth(x, y, color, flatToothRight2, first);
-				//placeTooth(x, y, color, flatToothRight, first);
 			}
 
 			black = !black;
 		}
-	};
+	}
 
 })();
