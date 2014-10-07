@@ -20,7 +20,7 @@ using(Box2D, "b2.+");
 
 (function Main() {
 	var STAGE_WIDTH = 720,
-			STAGE_HEIGHT = 800;
+			STAGE_HEIGHT = 5800;
 	var METER = 100;
 
 	var bodies = [],
@@ -289,7 +289,7 @@ using(Box2D, "b2.+");
 		stage.addChild(toothSprite);
 		toothSprite.i = i;
 		toothSprite.anchor.x = toothSprite.anchor.y = 0.5;
-		toothSprite.scale.x = toothSprite.scale.y = toothScale;
+		toothSprite.scale.x = toothSprite.scale.y = toothScale*1.04;
 
 		bodyDef.get_position().Set(x, y);
 
@@ -331,18 +331,14 @@ using(Box2D, "b2.+");
 
 
 	function preStack() {
-		var spacing = 0.05;
+		var spacing = 0.02;
+
+		//teethInRow += 2;
 		var color, black = true, first = true;
 		var size = (STAGE_WIDTH/teethInRow) / METER + spacing;
 		var x, y;
 		// Rows
-		for (var i = 0; i < 35; i++) {
-			// Columns
-			// if (black) {
-			// 	color = [0, 0, 0];
-			// } else {
-			// 	color = [255, 255, 255];
-			// }
+		for (var i = 0; i < 98; i++) {
 
 			for (var j = 0; j < teethInRow; j++) {
 				// Positions
