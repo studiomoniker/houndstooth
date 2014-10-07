@@ -19,7 +19,7 @@ using(Box2D, "b2.+");
 
 
 (function Main() {
-	var STAGE_WIDTH = 170,
+	var STAGE_WIDTH = 340,
 		STAGE_HEIGHT = 800;
 	var METER = 100;
 
@@ -30,7 +30,7 @@ using(Box2D, "b2.+");
 	var touchX, touchY;
 	var isBegin, wasMoved;
 	var stats;
-	var toothScale = 17/270;
+	var toothScale = 34/270;
 	var myQueryCallback;
 	var mouseJointGroundBody;
 
@@ -75,7 +75,7 @@ using(Box2D, "b2.+");
 	}
 
 	function onLoadAssets() {
-		world = new Box2D.b2World(new Box2D.b2Vec2(0, 10), true);
+		world = new Box2D.b2World(new Box2D.b2Vec2(0, 0), true);
 		mouseJointGroundBody = world.CreateBody(new b2BodyDef());
 		world.SetContinuousPhysics(true);
 
@@ -332,7 +332,7 @@ using(Box2D, "b2.+");
 		var teethInRow = 10;
 
 		var color, black = true, first = true;
-		var size = 0.17;
+		var size = 0.29;
 		var x, y;
 		// Rows
 		for (var i = 0; i < 35; i++) {
@@ -344,8 +344,8 @@ using(Box2D, "b2.+");
 			// }
 
 			for (var j = 0; j < teethInRow; j++) {
-				x = j * size + 0.12;
-				y = (STAGE_HEIGHT / METER) - (i * size * 0.4) - 0.1;
+				x = j * size + 0.34;
+				y = (STAGE_HEIGHT / METER) - (i * size * 0.4) - 0.2;
 
 				if (!black) {
 					x += size/2;
