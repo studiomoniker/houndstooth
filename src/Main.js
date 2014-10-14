@@ -66,6 +66,7 @@ using(Box2D, "b2.+");
 		document.body.appendChild(container);
 
 		stats = new Stats();
+		// Enable or disable stats here
 		//container.appendChild(stats.domElement);
 		stats.domElement.style.position = "absolute";
 
@@ -76,9 +77,8 @@ using(Box2D, "b2.+");
 
 		scaleParts(parts);
 
-		var loader = new PIXI.AssetLoader(["assets/ball.png",
-																			 "assets/box.jpg",
-																			 "assets/tooth.png"]);
+		var loader = new PIXI.AssetLoader(["assets/tooth.png"]);
+
 		loader.onComplete = onLoadAssets;
 		loader.load();
 	}
@@ -111,17 +111,7 @@ using(Box2D, "b2.+");
 
 		bodyDef.set_type(Box2D.b2_dynamicBody);
 
-		if (!stack) {
-			for (var i = 0; i < 200; i++) {
-				var x = MathUtil.rndRange(0, STAGE_WIDTH) / METER;
-				var y = MathUtil.rndRange(0, STAGE_HEIGHT - 50) / METER;
-
-				placeTooth(x, y);
-			}
-		} else {
-			preStack();
-		}
-
+		preStack();
 
 		myQueryCallback = new b2QueryCallback();
 
@@ -267,7 +257,7 @@ using(Box2D, "b2.+");
 	}
 
 
-	function scaleParts(array) {
+	function scaleParts() {
 		var o = -originalToothSize / 2;
 
 		parts.forEach(function(part) {
@@ -286,7 +276,7 @@ using(Box2D, "b2.+");
 	}
 
 
-	function placeTooth(x, y, color, shape, fixed) {
+	function placeTooth(x, y) {
 		// X && Y in physical units
 		var i = bodies.length;
 
@@ -298,6 +288,7 @@ using(Box2D, "b2.+");
 		toothSprite.scale.x = toothSprite.scale.y = toothScale*1.04;
 
 		bodyDef.get_position().Set(x, y);
+		bodyDef.set_linearDamping(0.5);
 
 		var body = world.CreateBody(bodyDef);
 		body.i = i;
@@ -310,7 +301,7 @@ using(Box2D, "b2.+");
 
 			var shape = createPolygonShape(array);
 			polyFixture.set_shape(shape);
-			polyFixture.set_friction(4);
+			polyFixture.set_friction(6);
 			polyFixture.set_density(20);
 			polyFixture.set_restitution(0.2);
 

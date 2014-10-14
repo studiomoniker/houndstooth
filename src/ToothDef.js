@@ -1,3 +1,4 @@
+// Vector points of the tooth, divided into simple, convex polygons
 
 var mainBody = [
   [217, 53],
