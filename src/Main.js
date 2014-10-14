@@ -102,11 +102,12 @@ using(Box2D, "b2.+");
 
 		//left wall
 		shape.SetAsBox(1, 100);
-		bodyDef.get_position().Set(-1, 0);
+		console.log(toothSize);
+		bodyDef.get_position().Set(-1 - toothSize/METER, 0);
 		world.CreateBody(bodyDef).CreateFixture(polyFixture);
 
 		//right wall
-		bodyDef.get_position().Set(STAGE_WIDTH / METER + 1, 0);
+		bodyDef.get_position().Set((STAGE_WIDTH + toothSize) / METER + 1, 0);
 		world.CreateBody(bodyDef).CreateFixture(polyFixture);
 
 		bodyDef.set_type(Box2D.b2_dynamicBody);
@@ -249,13 +250,21 @@ using(Box2D, "b2.+");
 			var position = body.GetPosition();
 			actor.position.x = position.get_x() * METER;
 			actor.position.y = position.get_y() * METER;
-			actor.rotation = body.GetAngle();
+			actor.rotation = roundOfAngle(body.GetAngle());
 		}
 
 		renderer.render(stage);
 		stats.update();
 	}
 
+	function roundOfAngle(angle) {
+		var deg = angle * 180 / Math.PI;
+		if (Math.abs(deg) < 4) {
+			return 0;
+		} else {
+			return angle;
+		}
+	}
 
 	function scaleParts() {
 		var o = -originalToothSize / 2;
