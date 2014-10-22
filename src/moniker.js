@@ -69,7 +69,6 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     })();
 
     function rgbToHex (r, g, b) {
-        console.log("r,g,b:", r,g,b);
         return (r << 16) + (g << 8) + b;
     };
 
