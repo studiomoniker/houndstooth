@@ -23,7 +23,8 @@ using(Box2D, "b2.+");
 var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var that = {},
         rotate = rotate || false,
-        pallette, ui;
+        pallette = _pallette,
+        ui;
 
     var STAGE_WIDTH = _width,
         STAGE_HEIGHT = _height;
@@ -67,6 +68,11 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
         window.onload = onLoad;
     })();
 
+    function rgbToHex (r, g, b) {
+        console.log("r,g,b:", r,g,b);
+        return (r << 16) + (g << 8) + b;
+    };
+
     function onLoad() {
         var container = document.createElement("div");
         document.body.appendChild(container);
@@ -76,7 +82,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
         //container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
 
-        stage = new PIXI.Stage(0xDDDDDD, true);
+        stage = new PIXI.Stage(rgbToHex.apply(null, pallette[0]), true);
 
         renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, undefined, false);
         document.body.appendChild(renderer.view);
