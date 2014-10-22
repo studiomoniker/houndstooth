@@ -88,7 +88,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
         scaleParts(parts);
 
-        var loader = new PIXI.AssetLoader(["assets/tooth.png"]);
+        var loader = new PIXI.AssetLoader([pallette[1]]);
 
         loader.onComplete = onLoadAssets;
         loader.load();
@@ -299,7 +299,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
         // X && Y in physical units
         var i = bodies.length;
 
-        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/tooth.png"));
+        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(pallette[1]));
 
         stage.addChild(toothSprite);
         toothSprite.i = i;
