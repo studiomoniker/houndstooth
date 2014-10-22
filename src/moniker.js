@@ -1,7 +1,10 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
 maxlen: 80, -W097, unused: true*/
 
-"use strict";
+//Having to type 'Box2D.' in front of everything makes porting
+//existing C++ code a pain in the butt. This function can be used
+//to make everything in the Box2D namespace available without
+//needing to do that.
 
 function using(ns, pattern) {
     if (typeof(pattern) == 'string') {
@@ -21,11 +24,6 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var that = {},
         rotate = rotate || false,
         pallette, ui;
-
-    //Having to type 'Box2D.' in front of everything makes porting
-    //existing C++ code a pain in the butt. This function can be used
-    //to make everything in the Box2D namespace available without
-    //needing to do that.
 
     var STAGE_WIDTH = _width,
         STAGE_HEIGHT = _height;
