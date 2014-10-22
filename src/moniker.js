@@ -22,12 +22,13 @@ using(Box2D, "b2.+");
 
 var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var that = {},
-        _rotate = rotate || false,
+        rotate = _rotate || false,
         pallette = _pallette,
         ui;
 
     var STAGE_WIDTH = _width,
         STAGE_HEIGHT = _height;
+
     var METER = 100;
 
     var bodies = [],
@@ -377,6 +378,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
             return pallete;
         },
         set pallette (value) {
+            // TODO the background and image need to update based on this
             pallette = value;
         },
         load: function(editorStateJSON) {
@@ -387,7 +389,10 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
             return JSON.stringify(ret);
         },
-        get canvas () {
+        get userCanvas () {
+            return stage;
+        },
+        get dataCanvas () {
             return stage;
         },
         get ui () {
