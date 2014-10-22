@@ -22,7 +22,7 @@ using(Box2D, "b2.+");
 
 var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var that = {},
-        rotate = rotate || false,
+        _rotate = rotate || false,
         pallette = _pallette,
         ui;
 
