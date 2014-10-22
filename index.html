@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>MouseJoint</title>
+    <title>Moniker</title>
     <style>
         body {
             background-color: #f0f0f0;
@@ -10,12 +10,27 @@
 
         }
     </style>
-    <script type="text/javascript" src="lib/Box2DEmscripten.js"></script>
-    <script type="text/javascript" src="lib/Pixi.js"></script>
-    <script type="text/javascript" src="lib/Stats.js"></script>
-    <script type="text/javascript" src="src/ToothDef.js"></script>
-    <script type="text/javascript" src="src/Main.js"></script>
-
   </head>
+  <body>
+    <div id="container"></div>
   <body/>
+  <script type="text/javascript" src="lib/Box2DEmscripten.js"></script>
+  <script type="text/javascript" src="lib/Pixi.js"></script>
+  <script type="text/javascript" src="lib/Stats.js"></script>
+  <script type="text/javascript" src="src/ToothDef.js"></script>
+  <script type="text/javascript" src="src/moniker.js"></script>
+  <script>
+    var container = document.getElementById('container'),
+        pallette = [[0, 0, 0], [0, 0, 0]],
+        rotate = false,
+        callback = function() {
+            container.appendChild(editor.canvas);
+            container.appendChild(editor.ui);
+        };
+
+    window.onload = function() {
+        editor = monikerEditor(550, 1546, pallette, rotate);
+        // editor = monikerEditor(174, 1561, pallette, rotate);
+    }
+  </script>
 </html>
