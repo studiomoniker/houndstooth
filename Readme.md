@@ -12,7 +12,7 @@ Drag one to move it.
 
 ## Editor Initialisation 
 
-`pallette` argument differs from other editors, needs to be a 2 item array:
+`palette` argument differs from other editors, needs to be a 2 item array:
 The first item is the background color as an 8bit rgb array
 The second item is the url of the houdstooth image to use, e.g.
 

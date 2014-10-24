@@ -1,10 +1,10 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
 maxlen: 100, -W097, unused: true*/
 
-var monikerEditor = function(_width, _height, _meter, _teethPerRow, _pallette, _rotate, cb) {
+var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _rotate, cb) {
     var that = {},
         rotate = _rotate || false,
-        pallette = _pallette,
+        palette = _palette,
         ui;
 
     var STAGE_WIDTH = _width,
@@ -61,14 +61,14 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _pallette, _
         //container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
 
-        stage = new PIXI.Stage(rgbToHex.apply(null, pallette[0]), true);
+        stage = new PIXI.Stage(rgbToHex.apply(null, palette[0]), true);
 
         renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, undefined, false);
         document.body.appendChild(renderer.view);
 
         scaleParts(parts);
 
-        var loader = new PIXI.AssetLoader([pallette[1]]);
+        var loader = new PIXI.AssetLoader([palette[1]]);
 
         loader.onComplete = onLoadAssets;
         loader.load();
@@ -280,7 +280,7 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _pallette, _
         // X && Y in physical units
         var i = bodies.length;
 
-        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(pallette[1]));
+        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(palette[1]));
 
         stage.addChild(toothSprite);
         toothSprite.i = i;
@@ -362,12 +362,12 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _pallette, _
     };
     //--------------------------------------------------------------------------
     that = {
-        get pallette  () {
+        get palette  () {
             return pallete;
         },
-        set pallette (value) {
+        set palette (value) {
             // TODO the background and image need to update based on this
-            pallette = value;
+            palette = value;
         },
         load: function(editorStateJSON) {
             var editorState = JSON.parse(editorStateJSON);
