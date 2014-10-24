@@ -1,14 +1,14 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
-maxlen: 100, -W097, unused: false*/
+maxlen: 100, -W097, unused: true*/
 
-var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _rotate, cb) {
+var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     var that = {},
         rotate = _rotate || false,
         palette = _palette,
         ui;
 
-    var STAGE_WIDTH = _width,
-        STAGE_HEIGHT = _height;
+    var STAGE_WIDTH = (_rotate) ? _height : _width,
+        STAGE_HEIGHT = (_rotate) ? _width : _height;
 
     var METER = _meter;
 
@@ -24,15 +24,15 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
 
     var polyFixture, bodyDef;
 
-    var originalToothSize = 270;
-    var teethInRow = _teethPerRow;
-    var toothSpacing = 2;
+    var originalToothSizeVector = 270;
+    var toothSize = 16;
+    var overlapFactor = (16 - 3) / 16;
 
-    var usableWidth = STAGE_WIDTH - (teethInRow - 1) * toothSpacing;
     // A row of n teeth needs 1*toothSize + (n-1) * toothSize * 0.8 space
-    var toothSize = usableWidth / (1 + (teethInRow - 1) * 0.8);
+    var teethInRow = Math.ceil(_width / (toothSize * overlapFactor));
 
-    var toothScale = toothSize/originalToothSize;
+    // This is used for the physics vector representation
+    var toothScale = toothSize/originalToothSizeVector;
 
     (function init() {
         if (!window.requestAnimationFrame) {
@@ -58,7 +58,7 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
 
         stats = new Stats();
         // Enable or disable stats here
-        //container.appendChild(stats.domElement);
+        container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
 
         stage = new PIXI.Stage(rgbToHex.apply(null, palette[0]), true);
@@ -86,18 +86,27 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
 
         bodyDef = new Box2D.b2BodyDef();
 
-        //down
-        shape.SetAsBox(10, 1);
-        bodyDef.get_position().Set(9, STAGE_HEIGHT / METER + 1);
+        // Length of walls
+        var boxWidth = STAGE_WIDTH / METER;
+        var boxHeight = STAGE_HEIGHT / METER;
+        var padding = 2;
+
+        //bottom
+        shape.SetAsBox(boxWidth, 1);
+        bodyDef.get_position().Set(boxWidth/2, boxHeight + padding);
+        world.CreateBody(bodyDef).CreateFixture(polyFixture);
+
+        //top
+        bodyDef.get_position().Set(boxWidth/2, - padding);
         world.CreateBody(bodyDef).CreateFixture(polyFixture);
 
         //left wall
-        shape.SetAsBox(1, 100);
-        bodyDef.get_position().Set(-1 - toothSize/METER, 0);
+        shape.SetAsBox(1, boxHeight);
+        bodyDef.get_position().Set(-padding, 0);
         world.CreateBody(bodyDef).CreateFixture(polyFixture);
 
         //right wall
-        bodyDef.get_position().Set((STAGE_WIDTH + toothSize) / METER + 1, 0);
+        bodyDef.get_position().Set(boxWidth + padding, 0);
         world.CreateBody(bodyDef).CreateFixture(polyFixture);
 
         bodyDef.set_type(Box2D.b2_dynamicBody);
@@ -149,6 +158,10 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
             touchX = undefined;
             touchY = undefined;
         }, true);
+
+        // var stepFilter = new PIXI.ColorStepFilter();
+        // stepFilter.step = 1;
+        // stage.filters = [stepFilter]
 
         update();
 
@@ -245,9 +258,17 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
             if (!actor) continue;
             var body = bodies[i];
             var position = body.GetPosition();
-            actor.position.x = position.get_x() * METER;
-            actor.position.y = position.get_y() * METER;
+
             actor.rotation = roundOfAngle(body.GetAngle());
+            if (actor.rotation !== 0) {
+                actor.position.x = Math.round(position.get_x() * METER);
+                actor.position.y = Math.round(position.get_y() * METER);
+            }
+            //actor.position.x = position.get_x() * METER;
+            //actor.position.y = position.get_y() * METER;
+            actor.position.x = Math.round(position.get_x() * METER);
+            actor.position.y = Math.round(position.get_y() * METER);
+
         }
 
         renderer.render(stage);
@@ -264,18 +285,17 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
     }
 
     function scaleParts() {
-        var o = -originalToothSize / 2;
+        var o = -originalToothSizeVector / 2;
 
         parts.forEach(function(part) {
             part.forEach(function(point) {
                 point[0] += o;
                 point[1] += o;
-                point[0] /= (METER / toothScale);
-                point[1] /= (METER / toothScale);
+                point[0] /= (METER / toothScale * 1.02);
+                point[1] /= (METER / toothScale * 1.02);
             });
         });
     }
-
 
     function arrayToVector(array) {
         return new Box2D.b2Vec2(array[0], array[1]);
@@ -294,10 +314,10 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
         stage.addChild(toothSprite);
         toothSprite.i = i;
         toothSprite.anchor.x = toothSprite.anchor.y = 0.5;
-        toothSprite.scale.x = toothSprite.scale.y = toothScale*1.04;
 
         bodyDef.get_position().Set(x, y);
         bodyDef.set_linearDamping(0.8);
+        bodyDef.set_angularDamping(0.8);
 
         var body = world.CreateBody(bodyDef);
         body.i = i;
@@ -342,30 +362,36 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
 
     function preStack() {
         var total = 0;
-        var spacing = toothSpacing / METER;
+        var spacing = 0;
 
         var size = toothSize / METER + spacing;
         var x, y;
 
         // How high to stack them.
         // Divided by 0.8 since the teeth overlap.
-        var height = Math.ceil(STAGE_HEIGHT/toothSize/0.8);
+        var height = Math.ceil(_height/toothSize/overlapFactor);
 
         // Rows
         for (var i = 0; i < height; i++) {
-            // Columsn
+            // Columns
             for (var j = 0; j < teethInRow; j++) {
                 // Positions
-                x = (j * size * 0.8) + size/2;
-                y = (i * size * 0.8) + size/2;
+                x = (j * size * overlapFactor) + size/2;
+                y = (i * size * overlapFactor) + size/2;
 
                 // y is top origin
-                y = (STAGE_HEIGHT / METER) - y;
+                y = (_height / METER) - y;
 
-                placeTooth(x, y);
+                if (_rotate) {
+                  placeTooth(y, x, Math.PI * 0.5);
+                } else {
+                  placeTooth(x, y);
+                }
+
                 total++;
             }
         }
+
         console.log('Added', total);
     }
 
@@ -435,6 +461,24 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
         },
         get ui () {
             return ui;
+        },
+        logX: function() {
+            var log = '';
+            actors.forEach(function (item, i) {
+                if (i % teethInRow === 0) {
+                    console.log(log);
+                    log = '';
+                }
+                log += toFixed(item.position.x) + ' ';
+            });
+
+        },
+        logAngle: function() {
+            var log = '';
+            actors.forEach(function (item) {
+                log += item.rotation + ' ';
+            });
+            console.log(log);
         }
     };
 
