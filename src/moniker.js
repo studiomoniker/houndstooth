@@ -1,8 +1,7 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
 maxlen: 100, -W097, unused: true*/
 
-
-var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
+var monikerEditor = function(_width, _height, _meter, _teethPerRow, _pallette, _rotate, cb) {
     var that = {},
         rotate = _rotate || false,
         pallette = _pallette,
@@ -11,7 +10,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var STAGE_WIDTH = _width,
         STAGE_HEIGHT = _height;
 
-    var METER = 100;
+    var METER = _meter;
 
     var bodies = [],
         actors = [];
@@ -26,7 +25,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var polyFixture, bodyDef;
 
     var originalToothSize = 270;
-    var teethInRow = 15;
+    var teethInRow = _teethPerRow;
     var toothSpacing = 2;
 
     var usableWidth = STAGE_WIDTH - (teethInRow - 1) * toothSpacing;
@@ -152,6 +151,8 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
         }, true);
 
         update();
+
+        if (cb) cb();
     }
 
     function getBodyAtMouse() {
@@ -327,13 +328,19 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
 
     function preStack() {
+        var total = 0;
         var spacing = toothSpacing / METER;
 
         var size = toothSize / METER + spacing;
         var x, y;
 
+        // How high to stack them.
+        // Divided by 0.8 since the teeth overlap.
+        var height = Math.ceil(STAGE_HEIGHT/toothSize/0.8);
+
         // Rows
-        for (var i = 0; i < 130; i++) {
+        for (var i = 0; i < height; i++) {
+            // Columsn
             for (var j = 0; j < teethInRow; j++) {
                 // Positions
                 x = (j * size * 0.8) + size/2;
@@ -343,8 +350,10 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
                 y = (STAGE_HEIGHT / METER) - y;
 
                 placeTooth(x, y);
+                total++;
             }
         }
+        console.log('Added', total);
     }
 
     //--------------------------------------------------------------------------
@@ -382,3 +391,10 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     onload();
     return that;
 };
+
+// Big scarf
+monikerEditor(500, 1561, 10, 40, [[0,35,144], 'assets/tooth-red.png'], false);
+
+
+// Small scarf
+//monikerEditor(172, 1561, 20, 14, [[0,35,144], 'assets/tooth-red.png'], false);
