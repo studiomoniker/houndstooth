@@ -381,6 +381,7 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
         set palette (value) {
             // TODO the background and image need to update based on this
             palette = value;
+            stage.setBackgroundColor(rgbToHex.apply(null, editorState.palette[0]));
         },
         clear: function () {
             // Remove all current actors from the stage
