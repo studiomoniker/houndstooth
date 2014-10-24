@@ -159,9 +159,9 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             touchY = undefined;
         }, true);
 
-        var thresholdFilter = new PIXI.ThresholdFilter();
-        thresholdFilter.threshold = 0.7;
-        stage.filters = [thresholdFilter]
+        thresholdFilter = new PIXI.ThresholdFilter();
+        thresholdFilter.threshold = 0.6;
+        stage.filters = [thresholdFilter];
 
         update();
 
@@ -479,6 +479,9 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
                 log += item.rotation + ' ';
             });
             console.log(log);
+        },
+        get filter () {
+            return thresholdFilter;
         }
     };
 

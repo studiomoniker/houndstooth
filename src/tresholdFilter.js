@@ -16,7 +16,11 @@ PIXI.ThresholdFilter = function()
 
     // set the uniforms
     this.uniforms = {
-        threshold: {type: '1f', value: 0.5}
+        threshold: {type: '1f', value: 0.5},
+        //FIXME: What type should this be?
+        colorFront: {type: '1f', value: 0.5},
+        //FIXME: What type should this be?
+        colorBack: {type: '1f', value: 0.5}
     };
 
     this.fragmentSrc = [
@@ -28,7 +32,7 @@ PIXI.ThresholdFilter = function()
 
         'void main(void) {',
         '   vec4 color = texture2D(uSampler, vTextureCoord);',
-        '   color = round(color - threshold + 0.5)',
+        '   color = floor(color - threshold + 1.0);',
         '   gl_FragColor = color;',
         '}'
     ];
