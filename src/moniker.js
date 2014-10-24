@@ -159,9 +159,9 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             touchY = undefined;
         }, true);
 
-        // var stepFilter = new PIXI.ColorStepFilter();
-        // stepFilter.step = 1;
-        // stage.filters = [stepFilter]
+        var thresholdFilter = new PIXI.ThresholdFilter();
+        thresholdFilter.threshold = 0.7;
+        stage.filters = [thresholdFilter]
 
         update();
 
