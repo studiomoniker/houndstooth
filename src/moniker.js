@@ -1,24 +1,6 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
 maxlen: 80, -W097, unused: true*/
 
-//Having to type 'Box2D.' in front of everything makes porting
-//existing C++ code a pain in the butt. This function can be used
-//to make everything in the Box2D namespace available without
-//needing to do that.
-
-function using(ns, pattern) {
-    if (typeof(pattern) == 'string') {
-        pattern = new RegExp(pattern);
-    }
-    // import only stuff matching given pattern
-    for (var name in ns) {
-        if (name.match(pattern)) {
-            this[name] = ns[name];
-        }
-    }
-}
-
-using(Box2D, "b2.+");
 
 var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var that = {},
@@ -97,7 +79,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
     function onLoadAssets() {
         world = new Box2D.b2World(new Box2D.b2Vec2(0, 0), true);
-        mouseJointGroundBody = world.CreateBody(new b2BodyDef());
+        mouseJointGroundBody = world.CreateBody(new Box2D.b2BodyDef());
         world.SetContinuousPhysics(true);
 
         polyFixture = new Box2D.b2FixtureDef();
@@ -125,13 +107,13 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
         preStack();
 
-        myQueryCallback = new b2QueryCallback();
+        myQueryCallback = new Box2D.b2QueryCallback();
 
         Box2D.customizeVTable(myQueryCallback, [{
             original: Box2D.b2QueryCallback.prototype.ReportFixture,
             replacement: function(thsPtr, fixturePtr) {
-                var ths = Box2D.wrapPointer(thsPtr, b2QueryCallback);
-                var fixture = Box2D.wrapPointer(fixturePtr, b2Fixture);
+                var ths = Box2D.wrapPointer(thsPtr, Box2D.b2QueryCallback);
+                var fixture = Box2D.wrapPointer(fixturePtr, Box2D.b2Fixture);
                 if (fixture.GetBody().GetType() != Box2D.b2_dynamicBody)
                     return true;
                 if (!fixture.TestPoint(ths.m_point))
@@ -139,8 +121,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
                 ths.m_fixture = fixture;
                 return false;
             }
-    }]);
-
+        }]);
 
         document.addEventListener("mousedown", function(event) {
             isBegin = true;
@@ -179,12 +160,12 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
         // Make a small box.
         var aabb = new Box2D.b2AABB();
         var d = 0.001;
-        aabb.set_lowerBound(new b2Vec2(touchX - d, touchY - d));
-        aabb.set_upperBound(new b2Vec2(touchX + d, touchY + d));
+        aabb.set_lowerBound(new Box2D.b2Vec2(touchX - d, touchY - d));
+        aabb.set_upperBound(new Box2D.b2Vec2(touchX + d, touchY + d));
 
         // Query the world for overlapping shapes.
         myQueryCallback.m_fixture = null;
-        myQueryCallback.m_point = new b2Vec2(touchX, touchY);
+        myQueryCallback.m_point = new Box2D.b2Vec2(touchX, touchY);
         world.QueryAABB(myQueryCallback, aabb);
 
         if (myQueryCallback.m_fixture) {
@@ -232,11 +213,11 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
                 var jointDef = new Box2D.b2MouseJointDef();
                 jointDef.set_bodyA(mouseJointGroundBody);
                 jointDef.set_bodyB(dragBody);
-                jointDef.set_target(new b2Vec2(touchX, touchY));
+                jointDef.set_target(new Box2D.b2Vec2(touchX, touchY));
                 jointDef.set_maxForce(500 * dragBody.GetMass());
                 jointDef.set_collideConnected(true);
 
-                mouseJoint = Box2D.castObject(world.CreateJoint(jointDef), b2MouseJoint);
+                mouseJoint = Box2D.castObject(world.CreateJoint(jointDef), Box2D.b2MouseJoint);
                 dragBody.SetAwake(true);
             }
         }
