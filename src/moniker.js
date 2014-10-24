@@ -1,5 +1,5 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
-maxlen: 80, -W097, unused: true*/
+maxlen: 100, -W097, unused: true*/
 
 
 var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
@@ -24,8 +24,6 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
     var mouseJointGroundBody;
 
     var polyFixture, bodyDef;
-
-    var stack = true;
 
     var originalToothSize = 270;
     var teethInRow = 15;
@@ -53,7 +51,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
 
     function rgbToHex (r, g, b) {
         return (r << 16) + (g << 8) + b;
-    };
+    }
 
     function onLoad() {
         var container = document.createElement("div");
@@ -129,7 +127,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
             document.addEventListener("mousemove", onMove, true);
         }, true);
 
-        document.addEventListener("mouseup", function(event) {
+        document.addEventListener("mouseup", function() {
             document.removeEventListener("mousemove", onMove, true);
             isBegin = false;
             if (!wasMoved) onClick();
@@ -144,7 +142,7 @@ var monikerEditor = function(_width, _height, _pallette, _rotate, callback) {
             renderer.view.addEventListener("touchmove", onMove, true);
         }, true);
 
-        renderer.view.addEventListener("touchend", function(event) {
+        renderer.view.addEventListener("touchend", function() {
             renderer.view.removeEventListener("touchmove", onMove, true);
             isBegin = false;
             if (!wasMoved) onClick();
