@@ -7,6 +7,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         palette = _palette,
         ui;
 
+    var toothBitmap = 'assets/tooth16.png';
     var STAGE_WIDTH = (_rotate) ? _height : _width,
         STAGE_HEIGHT = (_rotate) ? _width : _height;
 
@@ -61,14 +62,14 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
 
-        stage = new PIXI.Stage(rgbToHex.apply(null, palette[0]), true);
+        stage = new PIXI.Stage(0xFFF, true);
 
         renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, undefined, false);
         document.body.appendChild(renderer.view);
 
         scaleParts(parts);
 
-        var loader = new PIXI.AssetLoader([palette[1]]);
+        var loader = new PIXI.AssetLoader([toothBitmap]);
 
         loader.onComplete = onLoadAssets;
         loader.load();
@@ -161,6 +162,8 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         thresholdFilter = new PIXI.ThresholdFilter();
         thresholdFilter.threshold = 0.6;
+        thresholdFilter.colorBack = _palette[0];
+        thresholdFilter.colorFront = _palette[1];
         stage.filters = [thresholdFilter];
 
         update();
@@ -309,7 +312,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         }
         var i = bodies.length;
 
-        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(palette[1]));
+        var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(toothBitmap));
 
         stage.addChild(toothSprite);
         toothSprite.i = i;
@@ -407,7 +410,9 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         set palette (value) {
             // TODO the background and image need to update based on this
             palette = value;
-            stage.setBackgroundColor(rgbToHex.apply(null, editorState.palette[0]));
+            var filter = this.filter;
+            filter.colorBack = editorState.palette[0];
+            filter.colorFront = editorState.palette[1];
         },
         clear: function () {
             // Remove all current actors from the stage
