@@ -1,5 +1,5 @@
 /*jshint plusplus: false, passfail: true, browser: true, devel: true, indent: 4,
-maxlen: 100, -W097, unused: true*/
+maxlen: 100, -W097, unused: false*/
 
 var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _rotate, cb) {
     var that = {},
@@ -177,6 +177,12 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
         saveMousePosition(event);
     }
 
+    // A pretty fast toFixed(3) alternative
+    // See http://jsperf.com/parsefloat-tofixed-vs-math-round/18
+    function toFixed(v) {
+        return Math.floor(v * 1000) / 1000;
+    }
+
     function saveMousePosition(event) {
         if (event.changedTouches) {
             var touche = event.changedTouches[0];
@@ -276,8 +282,11 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
     }
 
 
-    function placeTooth(x, y) {
-        // X && Y in physical units
+    function placeTooth(x, y, angle, pixelUnits) {
+        if (pixelUnits) {
+          x /= METER;
+          y /= METER;
+        }
         var i = bodies.length;
 
         var toothSprite = new PIXI.Sprite(PIXI.Texture.fromFrame(palette[1]));
@@ -288,7 +297,7 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
         toothSprite.scale.x = toothSprite.scale.y = toothScale*1.04;
 
         bodyDef.get_position().Set(x, y);
-        bodyDef.set_linearDamping(0.5);
+        bodyDef.set_linearDamping(0.8);
 
         var body = world.CreateBody(bodyDef);
         body.i = i;
@@ -307,6 +316,10 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
 
             body.CreateFixture(polyFixture);
         });
+
+        if (angle) {
+          body.SetTransform(new Box2D.b2Vec2(x, y), angle);
+        }
 
         bodies.push(body);
         actors.push(toothSprite);
@@ -369,11 +382,47 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
             // TODO the background and image need to update based on this
             palette = value;
         },
+        clear: function () {
+            // Remove all current actors from the stage
+            actors.forEach(function (item, i) {
+              // Might have been destroyed earlier
+              if (item) {
+                // PIXI
+                stage.removeChild(item);
+                // Box2D
+                world.DestroyBody(bodies[i]);
+              }
+            });
+
+            actors = [];
+            bodies = [];
+        },
         load: function(editorStateJSON) {
             var editorState = JSON.parse(editorStateJSON);
+
+            this.clear();
+
+            stage.setBackgroundColor(rgbToHex.apply(null, editorState.palette[0]));
+
+            editorState.actors.forEach(function (item) {
+              placeTooth(item.x, item.y, item.rotation, true);
+            });
+
         },
         save: function() {
-            var ret = {};
+            var ret = {
+              actors: [],
+              palette: palette
+            };
+
+            // Positions are save in pixels, not meters
+            actors.forEach(function (item) {
+              ret.actors.push({
+                x: toFixed(item.position.x),
+                y: toFixed(item.position.y),
+                rotation: toFixed(item.rotation)
+              });
+            });
 
             return JSON.stringify(ret);
         },
@@ -391,10 +440,3 @@ var monikerEditor = function(_width, _height, _meter, _teethPerRow, _palette, _r
     onload();
     return that;
 };
-
-// Big scarf
-monikerEditor(500, 1561, 10, 40, [[0,35,144], 'assets/tooth-red.png'], false);
-
-
-// Small scarf
-//monikerEditor(172, 1561, 20, 14, [[0,35,144], 'assets/tooth-red.png'], false);
