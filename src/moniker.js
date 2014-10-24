@@ -29,7 +29,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     var overlapFactor = (16 - 3) / 16;
 
     // A row of n teeth needs 1*toothSize + (n-1) * toothSize * 0.8 space
-    var teethInRow = Math.ceil(_width / (toothSize * overlapFactor));
+    var teethInRow = Math.ceil(_width / (toothSize * overlapFactor)) + 1;
 
     // This is used for the physics vector representation
     var toothScale = toothSize/originalToothSizeVector;
@@ -89,7 +89,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         // Length of walls
         var boxWidth = STAGE_WIDTH / METER;
         var boxHeight = STAGE_HEIGHT / METER;
-        var padding = 2;
+        var padding = 3;
 
         //bottom
         shape.SetAsBox(boxWidth, 1);
@@ -369,15 +369,15 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         // How high to stack them.
         // Divided by 0.8 since the teeth overlap.
-        var height = Math.ceil(_height/toothSize/overlapFactor);
+        var height = Math.ceil(_height/toothSize/overlapFactor) + 1;
 
         // Rows
         for (var i = 0; i < height; i++) {
             // Columns
             for (var j = 0; j < teethInRow; j++) {
                 // Positions
-                x = (j * size * overlapFactor) + size/2;
-                y = (i * size * overlapFactor) + size/2;
+                x = (j * size * overlapFactor) + size/2 - size*overlapFactor;
+                y = (i * size * overlapFactor) + size/2 - size*overlapFactor;
 
                 // y is top origin
                 y = (_height / METER) - y;
