@@ -221,7 +221,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             bodies[i] = null;
             actors[i] = null;
         } else {
-            placeTooth(touchX, touchY);
+            placeTooth(touchX, touchY, Math.random() * Math.PI);
         }
 
     }
