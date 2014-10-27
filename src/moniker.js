@@ -8,13 +8,14 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         ui;
 
     var toothBitmap = 'assets/tooth16.png';
-    var STAGE_WIDTH = (_rotate) ? _height : _width,
-        STAGE_HEIGHT = (_rotate) ? _width : _height;
+    var STAGE_WIDTH = (rotate) ? _height : _width,
+        STAGE_HEIGHT = (rotate) ? _width : _height;
 
     var METER = _meter;
 
     var bodies = [],
-        actors = [];
+        actors = [],
+        fixtures = [];
     var stage, renderer;
     var world, mouseJoint;
     var touchX, touchY;
@@ -263,14 +264,14 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             var position = body.GetPosition();
 
             actor.rotation = roundOfAngle(body.GetAngle());
-            if (actor.rotation !== 0) {
+            if (actor.rotation === 0) {
                 actor.position.x = Math.round(position.get_x() * METER);
                 actor.position.y = Math.round(position.get_y() * METER);
+            } else {
+                actor.position.x = position.get_x() * METER;
+                actor.position.y = position.get_y() * METER;
             }
-            //actor.position.x = position.get_x() * METER;
-            //actor.position.y = position.get_y() * METER;
-            actor.position.x = Math.round(position.get_x() * METER);
-            actor.position.y = Math.round(position.get_y() * METER);
+
 
         }
 
@@ -337,7 +338,8 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             polyFixture.set_density(20);
             polyFixture.set_restitution(0.2);
 
-            body.CreateFixture(polyFixture);
+            var fix = body.CreateFixture(polyFixture);
+            fixtures.push(fix);
         });
 
         if (angle) {
@@ -385,7 +387,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
                 // y is top origin
                 y = (_height / METER) - y;
 
-                if (_rotate) {
+                if (rotate) {
                   placeTooth(y, x, Math.PI * 0.5);
                 } else {
                   placeTooth(x, y);
@@ -459,34 +461,38 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             return JSON.stringify(ret);
         },
         get userCanvas () {
-            return stage;
+            return renderer.view;
         },
         get dataCanvas () {
-            return stage;
+            return renderer.view;
         },
         get ui () {
             return ui;
         },
-        logX: function() {
-            var log = '';
-            actors.forEach(function (item, i) {
-                if (i % teethInRow === 0) {
-                    console.log(log);
-                    log = '';
-                }
-                log += toFixed(item.position.x) + ' ';
-            });
-
-        },
-        logAngle: function() {
-            var log = '';
-            actors.forEach(function (item) {
-                log += item.rotation + ' ';
-            });
-            console.log(log);
-        },
         get filter () {
             return thresholdFilter;
+        },
+        set friction (value) {
+            fixtures.forEach(function (fix) {
+                fix.SetFriction(value);
+            });
+        },
+        set density (value) {
+            fixtures.forEach(function (fix) {
+                fix.SetDensity(value);
+            });
+        },
+        set restitution (value) {
+            fixtures.forEach(function (fix) {
+                fix.SetRestitution(value);
+            });
+        },
+        set damping (value) {
+            bodies.forEach(function (body) {
+                body.SetLinearDamping(value);
+                body.SetAngularDamping(value);
+                //body.SetLinearDamping(value);
+            });
         }
     };
 
