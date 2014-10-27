@@ -13,6 +13,14 @@
   </head>
   <body>
     <div id="container"></div>
+    <label for=friction>friction</label>
+    <input type=range min=1 max=25 value=6 id=friction onchange="editor.friction = this.value">
+    <label for=density>density</label>
+    <input type=range min=1 max=50 value=20 id=density onchange="editor.density = this.value">
+    <label for=restitution>restitution</label>
+    <input type=range min=0 max=2.0 value=0.2 step=0.1 id=restitution onchange="editor.restitution = this.value">
+    <label for=damping>damping</label>
+    <input type=range min=0 max=4.0 value=0.8 step=0.1 id=damping onchange="editor.damping = this.value">
   <body/>
   <script type="text/javascript" src="lib/Box2DEmscripten.js"></script>
   <script type="text/javascript" src="lib/Pixi.js"></script>
@@ -25,8 +33,8 @@
         palette = [[221, 221, 221], "assets/tooth.png"],
         rotate = false,
         callback = function() {
-            container.appendChild(editor.canvas);
-            container.appendChild(editor.ui);
+            container.appendChild(editor.userCanvas);
+            //container.appendChild(editor.ui);
         };
 
     window.onload = function() {
@@ -34,7 +42,8 @@
         //editor = monikerEditor(172, 1561, 20, [[255,255,255], 'assets/tooth16.png'], false);
 
         // blanked scarf
-        editor = monikerEditor(500, 1561, 10, [[125,255,0], [0,0,156]], false);
+        editor = monikerEditor(500, 1561, 10, [[125,255,0], [155,0,156]], true, callback);
     }
   </script>
+
 </html>
