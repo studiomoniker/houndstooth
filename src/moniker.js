@@ -413,8 +413,8 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             // TODO the background and image need to update based on this
             palette = value;
             var filter = this.filter;
-            filter.colorBack = editorState.palette[0];
-            filter.colorFront = editorState.palette[1];
+            filter.colorBack = palette[0];
+            filter.colorFront = palette[1];
         },
         clear: function () {
             // Remove all current actors from the stage
