@@ -396,8 +396,6 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
                 total++;
             }
         }
-
-        console.log('Added', total);
     }
 
     //--------------------------------------------------------------------------
