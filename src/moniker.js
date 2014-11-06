@@ -459,11 +459,11 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
             return JSON.stringify(ret);
         },
-        get userCanvas () {
-            renderer.render(stage);
+        get userCanvas ()
             return renderer.view;
         },
         get dataCanvas () {
+            renderer.render(stage);
             return renderer.view;
         },
         get ui () {
