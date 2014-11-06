@@ -60,7 +60,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         stats = new Stats();
         // Enable or disable stats here
-        container.appendChild(stats.domElement);
+        // container.appendChild(stats.domElement);
         stats.domElement.style.position = "absolute";
 
         stage = new PIXI.Stage(0xFFF, true);
