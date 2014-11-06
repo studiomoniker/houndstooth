@@ -462,7 +462,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         get userCanvas () {
             return renderer.view;
         },
-        get dataCanvas () {
+        dataCanvas: function() {
             renderer.render(stage);
             return renderer.view;
         },
