@@ -65,9 +65,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         stage = new PIXI.Stage(0xFFF, true);
 
-        renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, {
-            preserveDrawingBuffer: true
-        }, false);
+        renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, null, false);
         document.body.appendChild(renderer.view);
 
         scaleParts(parts);
@@ -464,6 +462,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             return JSON.stringify(ret);
         },
         get userCanvas () {
+            renderer.render(stage);
             return renderer.view;
         },
         get dataCanvas () {
