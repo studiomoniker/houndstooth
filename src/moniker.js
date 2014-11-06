@@ -65,7 +65,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         stage = new PIXI.Stage(0xFFF, true);
 
-        renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, undefined, false);
+        renderer = PIXI.autoDetectRenderer(STAGE_WIDTH, STAGE_HEIGHT, null, false);
         document.body.appendChild(renderer.view);
 
         scaleParts(parts);
@@ -408,7 +408,6 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             return pallete;
         },
         set palette (value) {
-            // TODO the background and image need to update based on this
             palette = value;
             var filter = this.filter;
             filter.colorBack = palette[0];
@@ -449,16 +448,19 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
             // Positions are save in pixels, not meters
             actors.forEach(function (item) {
-              ret.actors.push({
-                x: toFixed(item.position.x),
-                y: toFixed(item.position.y),
-                rotation: toFixed(item.rotation)
-              });
+              if (item) {
+                ret.actors.push({
+                  x: toFixed(item.position.x),
+                  y: toFixed(item.position.y),
+                  rotation: toFixed(item.rotation)
+                });
+              }
             });
 
             return JSON.stringify(ret);
         },
         get userCanvas () {
+            renderer.render(stage);
             return renderer.view;
         },
         get dataCanvas () {
