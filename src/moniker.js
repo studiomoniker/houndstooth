@@ -214,11 +214,11 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     function saveMousePosition(event) {
         if (event.changedTouches) {
             var touche = event.changedTouches[0];
-            touchX = touche.pageX / METER;
-            touchY = touche.pageY / METER;
+            touchX = (touche.pageX - renderer.view.offsetLeft) / METER;
+            touchY = (touche.pageY - renderer.view.offsetTop) / METER;
         } else {
-            touchX = event.layerX / METER;
-            touchY = event.layerY / METER;
+            touchX = (event.pageX - renderer.view.offsetLeft) / METER;
+            touchY = (event.pageY - renderer.view.offsetTop) / METER;
         }
     }
 
