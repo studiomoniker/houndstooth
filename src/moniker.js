@@ -37,7 +37,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     var toothScale = toothSize/originalToothSizeVector;
 
     if (rotate) {
-        rotateCanvas = document.createElement('canvas')
+        rotateCanvas = document.createElement('canvas');
         rotateCanvas.width = STAGE_HEIGHT;
         rotateCanvas.height = STAGE_WIDTH;
         rctx = rotateCanvas.getContext('2d');
@@ -519,6 +519,10 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
                 body.SetAngularDamping(value);
                 //body.SetLinearDamping(value);
             });
+        },
+        reset: function() {
+            this.clear();
+            preStack();
         }
     };
 
