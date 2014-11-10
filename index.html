@@ -21,6 +21,9 @@
     <input type=range min=0 max=2.0 value=0.2 step=0.1 id=restitution onchange="editor.restitution = this.value">
     <label for=damping>damping</label>
     <input type=range min=0 max=4.0 value=0.8 step=0.1 id=damping onchange="editor.damping = this.value">
+
+    <input type="button" value="Save" id="save">
+    <ul id="saves"></ul>
   <body/>
   <script type="text/javascript" src="lib/Box2DEmscripten.js"></script>
   <script type="text/javascript" src="lib/Pixi.js"></script>
@@ -29,7 +32,11 @@
   <script type="text/javascript" src="src/ToothDef.js"></script>
   <script type="text/javascript" src="src/moniker.js"></script>
   <script>
-    var container = document.getElementById('container');
+    var container = document.getElementById('container'),
+        saves = document.getElementById('saves'),
+        save = document.getElementById('save'),
+        date = new Date(),
+        editor;
 
     window.onload = function() {
         var width, height, meter, palette, rotate, callback;
@@ -42,14 +49,27 @@
         // height =  1600;   // blanket scarf
         // meter =   10;     // blanket scarf
 
-        palette = [[125,255,0], [155,0,156]];
+        palette = [[0,0,0], [255,255,255]];
         rotate =  true;
         callback = function() {
             container.appendChild(editor.userCanvas);
         };
 
         editor = monikerEditor(width, height, meter, palette, rotate, callback);
-    }
+    };
+
+    save.onclick = function() {
+        var li = document.createElement('li'),
+            link = document.createElement('a');
+
+        link.href = editor.dataCanvas().toDataURL();
+        link.target = "_blank";
+        link.textContent = date.toTimeString();
+        link.style.display = 'block';
+
+        saves.appendChild(li);
+        li.appendChild(link);
+    };
   </script>
 
 </html>
