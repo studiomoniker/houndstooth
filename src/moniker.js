@@ -143,16 +143,18 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             }
         }]);
 
-        document.addEventListener("mousedown", function(event) {
+        renderer.view.addEventListener("mousedown", function(event) {
             isBegin = true;
             saveMousePosition(event);
-            document.addEventListener("mousemove", onMove, true);
+            renderer.view.addEventListener("mousemove", onMove, true);
         }, true);
 
-        document.addEventListener("mouseup", function() {
+        document.addEventListener("mouseup", function(event) {
             document.removeEventListener("mousemove", onMove, true);
             isBegin = false;
-            if (!wasMoved) onClick();
+            if (!wasMoved && event.target === renderer.view) {
+                onClick();
+            }
             wasMoved = false;
             touchX = undefined;
             touchY = undefined;
@@ -164,10 +166,12 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             renderer.view.addEventListener("touchmove", onMove, true);
         }, true);
 
-        renderer.view.addEventListener("touchend", function() {
-            renderer.view.removeEventListener("touchmove", onMove, true);
+        document.addEventListener("touchend", function() {
+            document.removeEventListener("touchmove", onMove, true);
             isBegin = false;
-            if (!wasMoved) onClick();
+            if (!wasMoved && event.target === renderer.view) {
+                onClick();
+            }
             wasMoved = false;
             touchX = undefined;
             touchY = undefined;
@@ -217,8 +221,8 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             touchX = (touche.pageX - renderer.view.offsetLeft) / METER;
             touchY = (touche.pageY - renderer.view.offsetTop) / METER;
         } else {
-            touchX = (event.pageX - renderer.view.offsetLeft) / METER;
-            touchY = (event.pageY - renderer.view.offsetTop) / METER;
+            touchX = (event.layerX - renderer.view.offsetLeft) / METER;
+            touchY = (event.layerY - renderer.view.offsetTop) / METER;
         }
     }
 
