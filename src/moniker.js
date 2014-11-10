@@ -83,6 +83,11 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         loader.load();
     }
 
+    function updateFilter () {
+        thresholdFilter.colorBack = palette[0];
+        thresholdFilter.colorFront = palette[1];
+    }
+
     function onLoadAssets() {
         world = new Box2D.b2World(new Box2D.b2Vec2(0, 0), true);
         mouseJointGroundBody = world.CreateBody(new Box2D.b2BodyDef());
@@ -170,8 +175,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
         thresholdFilter = new PIXI.ThresholdFilter();
         thresholdFilter.threshold = 0.6;
-        thresholdFilter.colorBack = _palette[0];
-        thresholdFilter.colorFront = _palette[1];
+        updateFilter();
         stage.filters = [thresholdFilter];
 
         update();
@@ -416,9 +420,7 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         },
         set palette (value) {
             palette = value;
-            var filter = this.filter;
-            filter.colorBack = palette[0];
-            filter.colorFront = palette[1];
+            updateFilter();
         },
         clear: function () {
             // Remove all current actors from the stage
@@ -441,11 +443,12 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             this.clear();
 
             stage.setBackgroundColor(rgbToHex.apply(null, editorState.palette[0]));
+            // use setter to get updateFilter()
+            this.palette = editorState.palette;
 
             editorState.actors.forEach(function (item) {
               placeTooth(item.x, item.y, item.rotation, true);
             });
-
         },
         save: function() {
             var ret = {
@@ -490,9 +493,6 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
         },
         get ui () {
             return ui;
-        },
-        get filter () {
-            return thresholdFilter;
         },
         set friction (value) {
             fixtures.forEach(function (fix) {
