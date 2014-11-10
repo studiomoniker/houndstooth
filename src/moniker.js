@@ -3,9 +3,9 @@ maxlen: 100, -W097, unused: true*/
 
 var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     var that = {},
-        rotate = _rotate || false,
+        rotate = _rotate === undefined ? false : _rotate,
         palette = _palette,
-        ui;
+        rotateCanvas, rctx, ui;
 
     var toothBitmap = 'assets/tooth16.png';
     var STAGE_WIDTH = (rotate) ? _height : _width,
@@ -35,6 +35,13 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
 
     // This is used for the physics vector representation
     var toothScale = toothSize/originalToothSizeVector;
+
+    if (rotate) {
+        rotateCanvas = document.createElement('canvas')
+        rotateCanvas.width = STAGE_HEIGHT;
+        rotateCanvas.height = STAGE_WIDTH;
+        rctx = rotateCanvas.getContext('2d');
+    }
 
     (function init() {
         if (!window.requestAnimationFrame) {
@@ -463,8 +470,23 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
             return renderer.view;
         },
         dataCanvas: function() {
+            var ret;
             renderer.render(stage);
-            return renderer.view;
+
+            if (rotate) {
+                rctx.save();
+                rctx.translate(rotateCanvas.width / 2, rotateCanvas.height / 2);
+                rctx.rotate(Math.PI * 0.5);
+                rctx.drawImage(renderer.view,
+                               -(STAGE_WIDTH / 2),
+                               -(STAGE_HEIGHT / 2));
+                rctx.restore();
+                ret = rotateCanvas;
+            } else {
+                ret = renderer.view;
+            }
+
+            return ret;
         },
         get ui () {
             return ui;
