@@ -216,13 +216,17 @@ var monikerEditor = function(_width, _height, _meter, _palette, _rotate, cb) {
     }
 
     function saveMousePosition(event) {
+        var boundRect = renderer.view.getBoundingClientRect(),
+            offsetLeft = boundRect.left,
+            offsetTop = boundRect.top;
+
         if (event.changedTouches) {
             var touche = event.changedTouches[0];
-            touchX = (touche.pageX - renderer.view.offsetLeft) / METER;
-            touchY = (touche.pageY - renderer.view.offsetTop) / METER;
+            touchX = (touche.clientX - offsetLeft) / METER;
+            touchY = (touche.clientY - offsetTop) / METER;
         } else {
-            touchX = (event.layerX - renderer.view.offsetLeft) / METER;
-            touchY = (event.layerY - renderer.view.offsetTop) / METER;
+            touchX = (event.clientX - offsetLeft) / METER;
+            touchY = (event.clientY - offsetTop) / METER;
         }
     }
 
