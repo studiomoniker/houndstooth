@@ -35,7 +35,7 @@ PIXI.ThresholdFilter = function()
         'void main(void) {',
         '   vec4 color = texture2D(uSampler, vTextureCoord);',
         '   color = floor(color - threshold + 1.0);',
-        '   if (color.a == 1.0) {',
+        '   if (color.a >= 0.999) {',       // HACK: fixes windows chrome bug
         '     gl_FragColor = colorFront;',
         '   } else {',
         '     gl_FragColor = colorBack;',
